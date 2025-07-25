@@ -1,7 +1,7 @@
 <?php
 require 'db_config.php';
 
-// Handle upload when form POSTS
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_FILES['noteFile']) || $_FILES['noteFile']['error'] !== UPLOAD_ERR_OK) {
         die('File upload error.');
@@ -27,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Fetch notes for display
 $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
 ?>
 <!DOCTYPE html>
