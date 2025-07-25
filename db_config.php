@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
-$user = 'your_mysql_user';
-$pass = 'your_mysql_password';
+$user = 'root';
+$pass = '';
 $db   = 'notes_portal';
 
 $conn = new mysqli($host, $user, $pass, $db);
