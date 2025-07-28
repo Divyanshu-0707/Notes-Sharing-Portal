@@ -1,55 +1,52 @@
 <?php
-// Start a session to store user information, if needed in the future.
 session_start();
-// A placeholder for the username. In a real application, this would come from a database after login.
+
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
 
- 
+
 require 'db_config.php';
 
-// --- Handle Form Submission ---
-// This block handles the file upload logic. It runs when the user submits the upload form.
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if a file was uploaded without errors
+    
     if (!isset($_FILES['noteFile']) || $_FILES['noteFile']['error'] !== UPLOAD_ERR_OK) {
         die('File upload error.');
     }
 
-    // Validate that the file is a PDF
+    
     $info = pathinfo($_FILES['noteFile']['name']);
     if (strtolower($info['extension']) !== 'pdf') {
         die('Only PDF files are allowed.');
     }
 
-    // Create the 'uploads' directory if it doesn't exist
+    
     $uploadsDir = __DIR__ . '/uploads';
     if (!is_dir($uploadsDir)) {
         mkdir($uploadsDir, 0755, true);
     }
 
-    // Generate a unique filename to prevent overwriting existing files
+    
     $newName = time() . '_' . uniqid() . '.pdf';
     if (!move_uploaded_file($_FILES['noteFile']['tmp_name'], "$uploadsDir/$newName")) {
         die('Failed to move uploaded file.');
     }
 
-    // Sanitize user input before inserting into the database
+   
     $title = mysqli_real_escape_string($conn, $_POST['title']);
     $desc  = mysqli_real_escape_string($conn, $_POST['description']);
 
-    // Insert the new note record into the database
+    
     $sql = "INSERT INTO notes (title, description, filename) VALUES ('$title', '$desc', '$newName')";
     if (!mysqli_query($conn, $sql)) {
         die('Database insert error: ' . mysqli_error($conn));
     }
 
-    // Redirect back to the main page to show the updated list of notes
+    
     header('Location: index.php');
     exit;
 }
 
-// --- Fetch Notes ---
-// This fetches all existing notes from the database to display them.
+
 $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
 ?>
 <!DOCTYPE html>
@@ -58,35 +55,35 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notes Sharing Portal</title>
-  <!-- Link to the updated stylesheet -->
+  
   <link rel="stylesheet" href="styles.css">
-  <!-- Link to Font Awesome for icons -->
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-  <!-- Main application container -->
+ 
   <div class="app-container">
-    <!-- Vertical sidebar for navigation -->
+   
     <nav class="topnav">
       <div class="logo-container">
-        <!-- Logo image, assuming it's in an 'images' folder -->
+        
         <img src="images/logo.png" alt="Logo" class="logo">
       </div>
       <ul class="menu-items">
-        <!-- Navigation link to the Dashboard view -->
+        
         <li class="nav-item active" data-target="homeView">
           <i class="fa-solid fa-table-columns"></i><span>Dashboard</span>
         </li>
-        <!-- Navigation link to the Upload view -->
+        
         <li class="nav-item" data-target="uploadView">
           <i class="fa-solid fa-upload"></i><span>Upload</span>
         </li>
       </ul>
     </nav>
 
-    <!-- Main content area -->
+   
     <main class="main-content">
-      <!-- Section for displaying all notes (Dashboard) -->
+      
       <section id="homeView" class="view active">
         <div class="page-header">
             <div class="header-text">
@@ -100,7 +97,7 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
         <div class="dashboard-grid">
           <?php if (mysqli_num_rows($result) > 0): ?>
             <?php while ($row = mysqli_fetch_assoc($result)): ?>
-              <!-- Card for each individual note -->
+              
               <div class="note-card">
                 <div class="note-card-header">
                   <span class="note-title"><?= htmlspecialchars($row['title']) ?></span>
@@ -109,11 +106,11 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
                 <div class="note-footer">
                   <span class="note-date"><?= date('d M Y', strtotime($row['uploaded_at'])) ?></span>
                   <div class="note-actions">
-                     <!-- Download link for the note PDF -->
+                     
                     <a href="uploads/<?= rawurlencode($row['filename']) ?>" class="btn-ghost" download>
                       <i class="fa-solid fa-download"></i>
                     </a>
-                    <!-- Delete link for the note -->
+                    
                     <a href="delete.php?id=<?= $row['id'] ?>" class="btn-ghost btn-delete" onclick="return confirm('Are you sure you want to delete this note?');">
                       <i class="fa-solid fa-trash"></i>
                     </a>
@@ -127,13 +124,13 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
         </div>
       </section>
 
-      <!-- Section for uploading new notes -->
+      
       <section id="uploadView" class="view">
         <div class="page-header">
           <h1>Upload a Note</h1>
         </div>
         <div class="upload-panel">
-          <!-- The form now posts to the same page (index.php) -->
+          <p>Share your knowledge by uploading notes. Please ensure the file is in PDF format.</p>
           <form id="uploadForm" action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="noteTitle">Title</label>
@@ -159,7 +156,7 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
     </main>
   </div>
 
-  <!-- JavaScript for view switching and file input label -->
   <script src="scripts.js"></script>
 </body>
 </html>
+/
