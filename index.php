@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Create the 'uploads' directory if it doesn't exist
-    $uploadsDir = __DIR__ . '/uploads';
+    $uploadsDir = __DIR__ . '/uploads';c
     if (!is_dir($uploadsDir)) {
         mkdir($uploadsDir, 0755, true);
     }
