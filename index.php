@@ -4,7 +4,7 @@ session_start();
 // A placeholder for the username. In a real application, this would come from a database after login.
 $username = isset($_SESSION['username']) ? $_SESSION['username'] : 'User';
 
-
+ 
 require 'db_config.php';
 
 // --- Handle Form Submission ---
