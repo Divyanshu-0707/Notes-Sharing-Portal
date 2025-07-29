@@ -108,6 +108,11 @@ $result = $stmt->get_result();
                         Logout
                     </a>
                 </div>
+                <!-- Fallback Logout Button -->
+                <noscript>
+                    <style>.profile-menu { display: none; }</style>
+                    <a href="logout.php" style="padding: 8px 12px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 8px; font-size: 14px;">Logout</a>
+                </noscript>
             </div>
         </div>
         <div class="dashboard-grid">
