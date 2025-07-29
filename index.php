@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['noteFile'])) {
         "INSERT INTO notes (user_id, title, description, filename) VALUES (?, ?, ?, ?)"
     );
     $stmt->bind_param('isss', $user_id, $title, $desc, $newName);
-    
+
     if (!$stmt->execute()) {
         die('Database insert error: ' . $stmt->error);
     }
@@ -89,6 +89,12 @@ $result = $stmt->get_result();
           <i class="fa-solid fa-upload"></i><span>Upload</span>
         </li>
       </ul>
+      <div class="menu-footer">
+        <a href="logout.php" class="nav-item logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+        </a>
+      </div>
     </nav>
     <main class="main-content">
       <section id="homeView" class="view active">
@@ -97,27 +103,10 @@ $result = $stmt->get_result();
                 <h1>Hi, <?= htmlspecialchars($username) ?>!</h1>
                 <p>Welcome back, your dashboard is ready.</p>
             </div>
-            <div class="header-actions">
-                <div class="profile" id="profile">
-                    <i class="fa-solid fa-user profile-icon"></i>
-                    <span class="profile-username"><?= htmlspecialchars($username) ?></span>
-                </div>
-                <div class="profile-menu" id="profileMenu">
-                    <a href="logout.php">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        Logout
-                    </a>
-                </div>
-                <!-- Fallback Logout Button -->
-                <noscript>
-                    <style>.profile-menu { display: none; }</style>
-                    <a href="logout.php" style="padding: 8px 12px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 8px; font-size: 14px;">Logout</a>
-                </noscript>
             </div>
-        </div>
         <div class="dashboard-grid">
           <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): 
+            <?php while ($row = $result->fetch_assoc()):
                 $file_url = 'uploads/' . rawurlencode($username) . '/' . rawurlencode($row['filename']);
             ?>
               <div class="note-card" data-href="<?= $file_url ?>">
