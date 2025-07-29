@@ -140,7 +140,8 @@ $result = $stmt->get_result();
           <h1>Upload a Note</h1>
         </div>
         <div class="upload-panel">
-         <p>Share your knowledge by uploading notes. Please ensure the file is in PDF format.</p>
+         <p>Please ensure the file is in PDF format.</p>
+         
           <form id="uploadForm" action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="noteTitle">Title</label>
