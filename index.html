@@ -133,7 +133,7 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
           <h1>Upload a Note</h1>
         </div>
         <div class="upload-panel">
-          <!-- The form now posts to the same page (index.php) -->
+         <p>Share your knowledge by uploading notes. Please ensure the file is in PDF format.</p>
           <form id="uploadForm" action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="noteTitle">Title</label>
