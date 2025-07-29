@@ -34,8 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    
     $title = mysqli_real_escape_string($conn, $_POST['title']);
     $desc  = mysqli_real_escape_string($conn, $_POST['description']);
-
-    
     $sql = "INSERT INTO notes (title, description, filename) VALUES ('$title', '$desc', '$newName')";
     if (!mysqli_query($conn, $sql)) {
         die('Database insert error: ' . mysqli_error($conn));
@@ -88,7 +86,7 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
         <div class="page-header">
             <div class="header-text">
                 <h1>Hi, <?= htmlspecialchars($username) ?>!</h1>
-                <p>Welcome back, your dashboard is ready.</p>
+                <p>Welcome, your dashboard is ready.</p>
             </div>
             <div class="header-actions">
                 <button class="btn-ghost"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -159,4 +157,3 @@ $result = mysqli_query($conn, "SELECT * FROM notes ORDER BY uploaded_at DESC");
   <script src="scripts.js"></script>
 </body>
 </html>
-/
