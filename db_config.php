@@ -2,7 +2,7 @@
 $host = 'localhost';
 $user = 'root';
 $pass = '';
-$db   = 'notes_portal';
+$db   = 'learn_dev';
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {

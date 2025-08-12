@@ -41,7 +41,7 @@ Why here? – Anything inside *htdocs* can be seen in your browser at
 ----------------------------------------------------
 1) Open your browser and go to **http://localhost/phpmyadmin**  
 2) Look for an **Import** tab, choose **schema.sql**, then click **Go**.  
-   Job done—this file builds a tiny database called *notes_portal* with the
+   Job done—this file builds a tiny database called *learn_dev* with the
    **notes** table the site expects. :contentReference[oaicite:3]{index=3}
 
 ----------------------------------------------------

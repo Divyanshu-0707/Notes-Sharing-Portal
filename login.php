@@ -1,8 +1,6 @@
 <?php
 session_start();
 require 'db_config.php';
-
-// If user is already logged in, redirect to the main page
 if (isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;

@@ -1,71 +1,4 @@
-<?php
-session_start();
-require 'db_config.php';
 
-// If the user is not logged in, redirect to the login page
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-
-// Get user info from session
-$user_id = $_SESSION['user_id'];
-$username = $_SESSION['username'];
-
-// --- Handle Form Submission for Note Upload ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['noteFile'])) {
-    // Check for file upload errors
-    if ($_FILES['noteFile']['error'] !== UPLOAD_ERR_OK) {
-        die('File upload error: ' . $_FILES['noteFile']['error']);
-    }
-
-    // Validate that the file is a PDF
-    $info = pathinfo($_FILES['noteFile']['name']);
-    if (strtolower($info['extension']) !== 'pdf') {
-        die('Only PDF files are allowed.');
-    }
-
-    // Create user-specific directory 'uploads/<username>' if it doesn't exist
-    $userUploadsDir = __DIR__ . '/uploads/' . rawurlencode($username);
-    if (!is_dir($userUploadsDir)) {
-        mkdir($userUploadsDir, 0755, true);
-    }
-
-    // Generate a unique filename
-    $newName = time() . '_' . uniqid() . '.pdf';
-    $destination = "$userUploadsDir/$newName";
-
-    if (!move_uploaded_file($_FILES['noteFile']['tmp_name'], $destination)) {
-        die('Failed to move uploaded file.');
-    }
-
-    // Sanitize and prepare data for database insertion
-    $title = $_POST['title'];
-    $desc  = $_POST['description'];
-
-    // Insert the new note record into the database using prepared statements
-    $stmt = $conn->prepare(
-        "INSERT INTO notes (user_id, title, description, filename) VALUES (?, ?, ?, ?)"
-    );
-    $stmt->bind_param('isss', $user_id, $title, $desc, $newName);
-
-    if (!$stmt->execute()) {
-        die('Database insert error: ' . $stmt->error);
-    }
-    $stmt->close();
-
-    // Redirect to the main page to show the updated list
-    header('Location: index.php');
-    exit;
-}
-
-// --- Fetch Notes for the Logged-in User ---
-$stmt = $conn->prepare("SELECT * FROM notes WHERE user_id = ? ORDER BY uploaded_at DESC");
-$stmt->bind_param('i', $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,12 +22,6 @@ $result = $stmt->get_result();
           <i class="fa-solid fa-upload"></i><span>Upload</span>
         </li>
       </ul>
-      <div class="menu-footer">
-        <a href="logout.php" class="nav-item logout-btn">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Logout</span>
-        </a>
-      </div>
     </nav>
     <main class="main-content">
       <section id="homeView" class="view active">
@@ -103,10 +30,22 @@ $result = $stmt->get_result();
                 <h1>Hi, <?= htmlspecialchars($username) ?>!</h1>
                 <p>Welcome back, your dashboard is ready.</p>
             </div>
+            <div class="header-actions">
+                <div class="profile" id="profile">
+                    <i class="fa-solid fa-user profile-icon"></i>
+                    <span class="profile-username"><?= htmlspecialchars($username) ?></span>
+                </div>
+                <div class="profile-menu" id="profileMenu">
+                    <a href="logout.php">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </a>
+                </div>
             </div>
+        </div>
         <div class="dashboard-grid">
           <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()):
+            <?php while ($row = $result->fetch_assoc()): 
                 $file_url = 'uploads/' . rawurlencode($username) . '/' . rawurlencode($row['filename']);
             ?>
               <div class="note-card" data-href="<?= $file_url ?>">
@@ -140,8 +79,7 @@ $result = $stmt->get_result();
           <h1>Upload a Note</h1>
         </div>
         <div class="upload-panel">
-         <p>Please ensure the file is in PDF format.</p>
-         
+         <p>Share your knowledge by uploading notes. Please ensure the file is in PDF format.</p>
           <form id="uploadForm" action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="noteTitle">Title</label>

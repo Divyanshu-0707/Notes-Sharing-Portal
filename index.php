@@ -2,36 +2,28 @@
 session_start();
 require 'db_config.php';
 
-// If the user is not logged in, redirect to the login page
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
-// Get user info from session
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-// --- Handle Form Submission for Note Upload ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['noteFile'])) {
-    // Check for file upload errors
     if ($_FILES['noteFile']['error'] !== UPLOAD_ERR_OK) {
         die('File upload error: ' . $_FILES['noteFile']['error']);
     }
 
-    // Validate that the file is a PDF
     $info = pathinfo($_FILES['noteFile']['name']);
     if (strtolower($info['extension']) !== 'pdf') {
         die('Only PDF files are allowed.');
     }
-
-    // Create user-specific directory 'uploads/<username>' if it doesn't exist
     $userUploadsDir = __DIR__ . '/uploads/' . rawurlencode($username);
     if (!is_dir($userUploadsDir)) {
         mkdir($userUploadsDir, 0755, true);
     }
 
-    // Generate a unique filename
     $newName = time() . '_' . uniqid() . '.pdf';
     $destination = "$userUploadsDir/$newName";
 
@@ -39,11 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['noteFile'])) {
         die('Failed to move uploaded file.');
     }
 
-    // Sanitize and prepare data for database insertion
     $title = $_POST['title'];
     $desc  = $_POST['description'];
-
-    // Insert the new note record into the database using prepared statements
     $stmt = $conn->prepare(
         "INSERT INTO notes (user_id, title, description, filename) VALUES (?, ?, ?, ?)"
     );
@@ -53,13 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['noteFile'])) {
         die('Database insert error: ' . $stmt->error);
     }
     $stmt->close();
-
-    // Redirect to the main page to show the updated list
     header('Location: index.php');
     exit;
 }
 
-// --- Fetch Notes for the Logged-in User ---
 $stmt = $conn->prepare("SELECT * FROM notes WHERE user_id = ? ORDER BY uploaded_at DESC");
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
@@ -141,7 +127,7 @@ $result = $stmt->get_result();
         </div>
         <div class="upload-panel">
          <p>Please ensure the file is in PDF format.</p>
-         
+         <p class="fileSizeTxt">Max file size: 40MB.</p>
           <form id="uploadForm" action="index.php" method="post" enctype="multipart/form-data">
             <div class="form-group">
               <label for="noteTitle">Title</label>
