@@ -1,74 +1,128 @@
-Learn.dev – PDF Notes-Sharing Website
-====================================
+===========================
+Learn.dev Notes Portal
+===========================
 
-This guide walks you through every single click—no coding knowledge needed.
-By the end you’ll be able to upload a PDF, watch it appear on the dashboard,
-and let classmates download it.
+Welcome!  
+This is a personal notes sharing portal where users can sign up, log in, upload notes in PDF format, view their notes, and delete them when needed.
 
-----------------------------------------------------
-1. What’s inside the “Learn.dev” folder?
-----------------------------------------------------
-Learn.dev/
-│
-├── index.php   →  The main web page (dashboard + upload form)
-├── index.html  →  Alternative view used after first upload
-├── upload.php  →  Handles the “Upload” button; puts files in the right place
-├── delete.php  →  Removes a note and its file when you click “Delete”
-├── db_config.php →  Knows *where* your database lives and how to log in
-├── schema.sql  →  Creates one simple table called **notes** in MySQL
-├── styles.css  →  Makes everything dark-mode and tidy
-├── scripts.js  →  Switches between “Dashboard” and “Upload” tabs
-└── uploads/    →  **Where every PDF is stored.** This folder is made automatically by the website if it doesn’t exist yet
+------------------------------------------------------------
+1. WHAT THIS PROJECT DOES
+------------------------------------------------------------
+• Lets you create a user account (Sign Up).  
+• Allows you to log in with your username & password.  
+• Lets you upload notes (PDF files only) with a title and description.  
+• Stores your notes in your own personal folder on the server.  
+• Lists your uploaded notes so you can open them or delete them.  
+• Securely saves user information and notes in a database.  
+• Lets you log out when done.
 
-----------------------------------------------------
-2. Software you’ll need (all free)
-----------------------------------------------------
-• **XAMPP** for Windows or Linux – bundles Apache (web server) and MySQL
-Download, install, then open the control-panel and press START for both
-*Apache* and *MySQL* (two green lights mean you’re good).
-----------------------------------------------------
-3. Put Learn.dev in the right place
-----------------------------------------------------
-1) Find the “htdocs” (or XAMPP/htdocs”) folder that XAMPP created.  
-2) Copy the entire **Learn.dev** folder into *htdocs*.  
-   • Example (Windows): `C:\xampp\htdocs\Learn.dev`
+------------------------------------------------------------
+2. WHAT YOU NEED BEFORE STARTING
+------------------------------------------------------------
+• A computer with **XAMPP** (or WAMP/MAMP) installed.  
+  - XAMPP will provide:
+    - PHP (to run the code)
+    - MySQL (to store the data)
+    - Apache (to serve the website)
+• A web browser (Chrome, Edge, Firefox, etc.)
+• Basic ability to copy and paste files.
 
-Why here? – Anything inside *htdocs* can be seen in your browser at
-`http://localhost/…`. That’s how Apache works.
+------------------------------------------------------------
+3. HOW TO SET IT UP
+------------------------------------------------------------
 
-----------------------------------------------------
-4. Create the database (one-time step)
-----------------------------------------------------
-1) Open your browser and go to **http://localhost/phpmyadmin**  
-2) Look for an **Import** tab, choose **schema.sql**, then click **Go**.  
-   Job done—this file builds a tiny database called *learn_dev* with the
-   **notes** table the site expects. :contentReference[oaicite:3]{index=3}
+STEP 1 — Install XAMPP  
+- Download XAMPP
+- Install it, then open the **XAMPP Control Panel**.  
+- Start **Apache** and **MySQL**.
 
-----------------------------------------------------
-5. Tell the site how to reach MySQL
-----------------------------------------------------
-1) Double-click **db_config.php** to open it in Notepad.  
-2) If you left the MySQL password blank during XAMPP setup (default), do nothing.
-   Otherwise type your password between the quotes on the `$pass` line and save. :contentReference[oaicite:4]{index=4}
+STEP 2 — Place the Project Files  
+- Copy the entire project folder into:
+  C:\xampp\htdocs\  
+- For example:  
+  C:\xampp\htdocs\learn_dev  
 
-----------------------------------------------------
-6. Launch Learn.dev in your browser
-----------------------------------------------------
-Visit **http://localhost/Learn.dev/index.php**  
-You should see a dark dashboard titled **All Notes**.
+STEP 3 — Create the Database  
+1. Open your browser and go to:
+   http://localhost/phpmyadmin
+2. Click the **SQL** tab.
+3. Open the file `schema.sql` from the project folder.
+4. Copy everything from it and paste into the SQL box.
+5. Click **Go**.  
+   This will create:
+   - A database named `learn_dev`
+   - A `users` table (for storing accounts)
+   - A `notes` table (for storing uploaded notes)
 
-----------------------------------------------------
-7. Upload your first note
-----------------------------------------------------
-1) Click **Upload** (top right).  
-2) Press **Choose PDF** and pick a file. The page only accepts “.pdf” files;
-   any other type is politely refused by the code. :contentReference[oaicite:5]{index=5}  
-3) Fill in **Title** and **Description** and hit **Upload**.  
-   • The PDF lands in the **uploads** folder, created if missing. :contentReference[oaicite:6]{index=6}  
-   • A row describing your file is added to the database. :contentReference[oaicite:7]{index=7}  
-4) The dashboard refreshes and shows a new card with:  
-   • A **download arrow** (click to grab the PDF—served from /uploads/) :contentReference[oaicite:8]{index=8}  
-   • A **3-dot menu → Delete** (click to remove the record *and* the file) :contentReference[oaicite:9]{index=9}
+STEP 4 — Database Connection Settings  
+- Open the file `db_config.php` in a text editor.  
+- Make sure the settings match your XAMPP install:
+    $host = 'localhost';
+    $user = 'root';
+    $pass = '';
+    $db   = 'learn_dev';
+- Usually you don’t need to change anything if using XAMPP defaults.
 
-That’s it—your Learn.dev site is live. Share the localhost link on your LAN or
-move the folder to any hosting that supports PHP 8 and MySQL.
+STEP 5 — Access the Website  
+- In your browser, go to:
+  http://localhost/learn_dev  
+- You should see the login or register page.
+
+------------------------------------------------------------
+4. HOW TO USE THE WEBSITE
+------------------------------------------------------------
+
+**REGISTER A NEW ACCOUNT**  
+- Click "Register".
+- Fill in your username, email, and password.
+- Submit the form — your account is saved in the database.
+
+**LOG IN**  
+- Use your username and password to log in.
+- You’ll be redirected to your notes dashboard.
+
+**UPLOAD NOTES**  
+- Fill in the Title and Description.
+- Choose a PDF file.
+- Click "Upload".
+- Your file will be stored in:
+  `uploads/<your_username>/`  
+- Information about your note is stored in the `notes` table.
+
+**VIEW NOTES**  
+- Your uploaded notes appear as cards.
+- Click the card to open the PDF in a new tab.
+
+**DELETE NOTES**  
+- Click the delete icon on a note.
+- This removes it from the server and the database.
+
+**LOG OUT**  
+- Click "Logout" to end your session.
+
+------------------------------------------------------------
+5. WHAT EACH FILE DOES
+------------------------------------------------------------
+
+**db_config.php** — Connects the site to the MySQL database.  
+
+**index.php** — Main dashboard; lists your notes, handles file uploads, and stores note details in the database.  
+
+**login.php** — Lets users log in by checking username & password in the database.  
+
+**register.php** — Creates a new user account and saves it in the `users` table.  
+
+**logout.php** — Ends the session so the user is logged out.  
+
+**upload.php** — Handles the process of saving uploaded files to the server.  
+
+**delete.php** — Removes a specific note from both the server and the database.  
+
+**scripts.js** — Adds interactivity:
+- Handles navigation tab switching.
+- Shows selected file name.
+- Opens notes when clicked.
+
+**schema.sql** — The instructions to create the database tables.
+
+**uploads/** — This folder stores each user's notes in a separate subfolder.
